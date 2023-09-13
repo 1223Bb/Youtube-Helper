@@ -1,7 +1,26 @@
+import { Github, Youtube } from "lucide-react";
+import { Button } from "./components/ui/button";
+import { Separator } from "./components/ui/separator";
+
 export function App() {
   return (
     <>
-      <h1>Hello world!</h1>
+      <div className="px-6 py-3 flex items-center justify-between border-b">
+        <h1 className="text-xl font-bold flex justify-center items-center">
+          <Youtube className="mr-2" color="#facc15" />
+          Youtube Helper
+        </h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            Developed with 💛 by Bruno Scachetti
+          </span>
+          <Separator orientation="vertical" className="h-6" />
+          <Button variant={"outline"}>
+            <Github className="w-4 h-4 mr-2" />
+            GitHub
+          </Button>
+        </div>
+      </div>
     </>
   );
 }
