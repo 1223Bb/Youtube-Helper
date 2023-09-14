@@ -16,3 +16,10 @@ Content-Type: audio/mpeg
 
 ###
 
+# @name create-transcription
+POST http://localhost:3333/videos/e22ea7a5-7520-4133-b4a4-c874a0c9c1a2/transcription
+Content-Type: application/json
+
+{
+    "prompt": "music box notes"
+}
