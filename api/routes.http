@@ -17,9 +17,9 @@ Content-Type: audio/mpeg
 ###
 
 # @name create-transcription
-POST http://localhost:3333/videos/e22ea7a5-7520-4133-b4a4-c874a0c9c1a2/transcription
+POST http://localhost:3333/videos/7c0fe80d-bbee-4b6b-b114-580ed1062ea1/transcription
 Content-Type: application/json
 
 {
-    "prompt": "music box notes"
+    "prompt": "normal talking, testing, english, portuguese"
 }
