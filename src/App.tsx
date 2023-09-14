@@ -1,4 +1,4 @@
-import { Github, Youtube, FileVideo, Upload, Wand2 } from "lucide-react";
+import { Github, Youtube, Wand2 } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Separator } from "./components/ui/separator";
 import { Textarea } from "./components/ui/textarea";
@@ -11,8 +11,33 @@ import {
   SelectValue,
 } from "./components/ui/select";
 import { Slider } from "./components/ui/slider";
+import { VideoInputForm } from "./components/video-input-form";
+import { PromptSelect } from "./components/prompt-select";
+import { useState } from "react";
+import { useCompletion } from "ai/react";
 
 export function App() {
+  const [temperature, setTemperature] = useState(0.5);
+  const [videoId, setVideoId] = useState<string | null>(null);
+
+  const {
+    input,
+    setInput,
+    handleInputChange,
+    handleSubmit,
+    completion,
+    isLoading,
+  } = useCompletion({
+    api: "http://localhost:3333/ai/complete",
+    body: {
+      videoId,
+      temperature,
+    },
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
@@ -38,56 +63,24 @@ export function App() {
           <Textarea
             className="resize-none p-3 leading-relaxed"
             placeholder="AI Prompt goes here..."
+            value={input}
+            onChange={handleInputChange}
           />
           <Textarea
             className="resize-none p-3 leading-relaxed"
             placeholder="Results will show up here..."
             readOnly
+            value={completion}
           />
         </div>
         {/* Sidebar */}
         <aside className="w-80 space-y-6 flex flex-col">
-          <form className="space-y-6">
-            <label
-              className="text-muted-foreground border flex items-center justify-center w-full aspect-video rounded-md border-dashed flex-col text-sm hover:bg-primary/20 duration-300"
-              htmlFor="video"
-            >
-              <FileVideo className="w-4 h-4" />
-              Select video
-            </label>
-            <input
-              className="sr-only"
-              type="file"
-              id="video"
-              accept="video/mp4"
-            />
-          </form>
-          <Separator />
-          <div className="space-y-2">
-            <Label htmlFor="transcription">Transcription Prompt</Label>
-            <Textarea
-              id="transcription"
-              className="h-20 leading-relaxed resize-none"
-              placeholder="Type in keywords mentioned in the video, separated by a comma (,)."
-            ></Textarea>
-          </div>
-          <Button className="w-full">
-            Upload video
-            <Upload className="w-4 h-4 ml-2" type="submit" />
-          </Button>
+          <VideoInputForm onVideoUploaded={setVideoId} />
           <Separator />
           <div className="space-y-6">
-            <form className="space-y-2">
+            <form onSubmit={handleSubmit} className="space-y-2">
               <Label>Prompt</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a prompt..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="title">Youtube Titles</SelectItem>
-                  <SelectItem value="desc">Youtube Description</SelectItem>
-                </SelectContent>
-              </Select>
+              <PromptSelect onPromptSelected={setInput} />
               <Label>Model</Label>
               <Select defaultValue="gpt3.5" disabled>
                 <SelectTrigger>
@@ -103,13 +96,19 @@ export function App() {
               <Separator />
               <div className="space-y-4">
                 <Label>Temperature</Label>
-                <Slider min={0} max={1} step={0.1} defaultValue={[0.5]} />
+                <Slider
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={[temperature]}
+                  onValueChange={(value) => setTemperature(value[0])}
+                />
                 <span className="text-muted-foreground text-xs italic">
                   Higher values result in more creative results at the risk of
                   possible mistakes.
                 </span>
               </div>
-              <Button className="w-full">
+              <Button className="w-full" disabled={isLoading}>
                 Run <Wand2 className="w-4 h-4 ml-2" />
               </Button>
             </form>
